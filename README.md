@@ -1,4 +1,4 @@
-## Api Address IBGE Challenge 🏆 
+## API Address IBGE Challenge 🏆 
 This API aims to consume the IBGE API and execute some directives internally. This repository is a challenge for a Junior Backend position.
 
 #### 1. import your state's IBGE cities (https://servicodados.ibge.gov.br/api/docs/localidades#api-Municipios-estadosUFMunicipiosGet)
