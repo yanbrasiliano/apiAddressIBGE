@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use App\Services\Api\ResponseClientRequestService;
 
 class GetData extends Command
 {
@@ -11,14 +12,15 @@ class GetData extends Command
      *
      * @var string
      */
-    protected $signature = 'command:name';
+		protected $callService;
+    protected $signature = 'get:data';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Get data API IBGE and register in DB.';
 
     /**
      * Create a new command instance.
@@ -27,6 +29,7 @@ class GetData extends Command
      */
     public function __construct()
     {
+				$this->callService = $this->getCallService(env('URL_API_IBGE'));
         parent::__construct();
     }
 
@@ -37,6 +40,13 @@ class GetData extends Command
      */
     public function handle()
     {
-        return 0;
+			$calls = $this->callService->get('distritos')['response'];
+			dd($calls);
     }
+
+		private function getCallService($url){
+			return new ResponseClientRequestService($url);
+		}
+
+		
 }
