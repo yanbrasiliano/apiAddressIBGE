@@ -6,7 +6,7 @@ class ResponseClientRequestService extends BaseClientRequestService
 {
 	public function get($route = '')
 	{
-		$response = $this->client->get($this->server['url'] . $route);
+		$response = $this->client->get($this->server['url']);
 
 		return [
 			'status' => $response->getStatusCode(),

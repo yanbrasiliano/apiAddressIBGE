@@ -40,8 +40,9 @@ class GetData extends Command
      */
     public function handle()
     {
-			$calls = $this->callService->get('distritos')['response'];
-			dd($calls);
+			$calls = $this->callService->get((env('URL_API_IBGE')));
+			
+			
     }
 
 		private function getCallService($url){
