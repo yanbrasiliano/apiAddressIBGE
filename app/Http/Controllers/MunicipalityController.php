@@ -23,10 +23,10 @@ class MunicipalityController extends Controller
 		return $this->municipalityService->find($id);
 	}
 
-	public function getByFields(Request $request)
-	{
-		return $this->municipalityService->findWhere($request->all());
-	}
+	// public function getByFields(Request $request)
+	// {
+	// 	return $this->municipalityService->findWhere($request->all());
+	// }
 
 	public function register(Request $request)
 	{
