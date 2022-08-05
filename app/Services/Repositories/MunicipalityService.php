@@ -5,7 +5,7 @@ namespace App\Services\Repositories;
 use App\Repositories\Contracts\QueryBuilder\MunicipalityRepositoryInterface as QueryBuilderInterface;
 use App\Repositories\Contracts\Eloquent\MunicipalityRepositoryInterface as EloquentInterface;
 
-use App\Traits\RestResponseTrait;
+use App\Traits\ResponseTrait;
 use App\Traits\QueryTrait;
 
 
@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 class MunicipalityService implements QueryBuilderInterface, EloquentInterface
 {
-	use RestResponseTrait;
+	use ResponseTrait;
 	use QueryTrait;
 
 	protected $queryBuilder;
