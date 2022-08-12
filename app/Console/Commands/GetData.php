@@ -54,7 +54,6 @@ class GetData extends Command
 
 		private function register($call){
 		
-			
 			$this->getDataResponse($this->municipalityService->store(
 				[
 					'district' => $call['microrregiao']['nome'],
