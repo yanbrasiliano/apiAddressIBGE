@@ -57,16 +57,10 @@ class GetData extends Command
 		return new ResponseClientRequestService(env('URL_API_IBGE'));
 	}
 
-	private function verifyCodMunicipality($cod)
-	{
-		return $this->municipalityService->findWhere(['id' => $cod]);
-	}
-
 	private function insertMunicipality($calls)
 	{
 		collect($calls['response'])->each(function ($municipality) {
-			$data = $this->verifyCodMunicipality($municipality['id']);
-			if (!is_null($data) && !empty($data->id)) {
+			if (!is_null($this->municipalityService->all($municipality))) {
 				$this->municipalityService->store(
 					[
 						'district' => $municipality['nome'],
@@ -76,6 +70,7 @@ class GetData extends Command
 					]
 				);
 			}
+			
 		});
 	}
 }
