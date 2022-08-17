@@ -6,62 +6,76 @@ use Illuminate\Console\Command;
 use App\Services\Api\ResponseClientRequestService;
 use App\Services\Repositories\MunicipalityService;
 
+
 class GetData extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-		protected $callService;
-		protected $municipalityService;
-    protected $signature = 'get:data';
+	/**
+	 * The name and signature of the console command.
+	 *
+	 * @var string
+	 */
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Get data API IBGE and register in DB.';
+	protected $signature = 'get:data';
 
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct(MunicipalityService $municipalityService)
-    {
-				$this->callService = $this->getCallService(env('URL_API_IBGE'));
-				$this->municipalityService = $municipalityService;
-        parent::__construct();
-    }
+	/**
+	 * The console command description.
+	 *
+	 * @var string
+	 */
+	protected $description = 'Get data API IBGE and register in DB.';
+	protected $callService;
 
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
-    public function handle()
-    {
-			$calls = $this->callService->get((env('URL_API_IBGE')));
-			$this->register($calls);
-			
-    }
+	/**
+	 * Create a new command instance.
+	 *
+	 * @return void
+	 */
+	public function __construct(
+		protected MunicipalityService $municipalityService
+	) {
+		$this->callService = $this->getCallService();
+		$this->municipalityService = $municipalityService;
 
-		private function getCallService($url){
-			return new ResponseClientRequestService($url);
-		}
+		parent::__construct();
+	}
 
-		private function register($call){
-		
-			$this->getDataResponse($this->municipalityService->store(
-				[
-					'district' => $call['microrregiao']['nome'],
-					'name' => $call['nome'],
-					'id_ibge' => $call['id'],
-					'id_city' => $call['microrregiao']['id']
-			]
-				));
-		}
-		
+	/**
+	 * Execute the console command.
+	 *
+	 * @return int
+	 */
+	public function handle()
+	{
+		$calls = $this->callService->get();
+		$this->info('Iniciando job carga banco municipios.');
+		$this->insertMunicipality($calls);
+		$this->info('Finalizando job carga banco municipios.');
+	}
+
+	private function getCallService(): mixed
+	{
+		return new ResponseClientRequestService(env('URL_API_IBGE'));
+	}
+
+	private function verifyCodMunicipality($cod)
+	{
+		return $this->municipalityService->findWhere(['id' => $cod]);
+	}
+
+	private function insertMunicipality($calls)
+	{
+		collect($calls['response'])->each(function ($municipality) {
+			$data = $this->verifyCodMunicipality($municipality['id']);
+			if (!is_null($data) && !empty($data->id)) {
+				$this->municipalityService->store(
+					[
+						'district' => $municipality['nome'],
+						'name' => $municipality['microrregiao']['nome'],
+						'id_ibge' => $municipality['id'],
+						'id_city' => $municipality['microrregiao']['id'],
+					]
+				);
+			}
+		});
+	}
 }

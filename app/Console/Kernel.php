@@ -28,6 +28,8 @@ class Kernel extends ConsoleKernel
 
 	protected function schedule(Schedule $schedule)
 	{
+		$schedule->command('get:data')->dailyAt('5:00'); // Diariamente às 5 da manhã
+
 	}
 
 	/**
