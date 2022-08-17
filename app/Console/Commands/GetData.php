@@ -59,8 +59,9 @@ class GetData extends Command
 
 	private function insertMunicipality($calls)
 	{
+
 		collect($calls['response'])->each(function ($municipality) {
-			if (!is_null($this->municipalityService->all($municipality))) {
+			if ($this->verifyExists($municipality['id'])) {
 				$this->municipalityService->store(
 					[
 						'district' => $municipality['nome'],
@@ -70,7 +71,16 @@ class GetData extends Command
 					]
 				);
 			}
-			
 		});
+	}
+
+	private function verifyExists($id)
+	{
+		$result =	$this->municipalityService->find($id);
+		$content = $result->getData();
+		if (empty($content)) {
+			return true;
+		}
+		return false;
 	}
 }
